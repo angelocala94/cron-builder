@@ -636,7 +636,7 @@ function PropDoc({
   example,
 }: PropDef) {
   return (
-    <article className='prop-doc grid gap-3 rounded-2xl border border-border/60 p-5'>
+    <article className='prop-doc grid grid-cols-[minmax(0,_1fr)] gap-3 rounded-2xl border border-border/60 p-5'>
       <header className='flex flex-wrap items-center gap-2'>
         <code className='font-mono text-base font-semibold text-foreground'>
           {name}
@@ -674,7 +674,7 @@ function PropDoc({
 
 function PropGroupSection({ group }: { group: PropGroup }) {
   return (
-    <section className='grid gap-5'>
+    <section className='grid grid-cols-[minmax(0,_1fr)] gap-5'>
       <header className='grid gap-1 border-b border-border/50 pb-3'>
         <div className='flex items-baseline justify-between gap-4'>
           <h3 className='text-xl font-semibold tracking-[-0.01em] text-foreground'>
@@ -691,7 +691,7 @@ function PropGroupSection({ group }: { group: PropGroup }) {
           </p>
         )}
       </header>
-      <div className='grid gap-4'>
+      <div className='grid grid-cols-[minmax(0,_1fr)] gap-4'>
         {group.props.map((p) => (
           <PropDoc key={p.name} {...p} />
         ))}
@@ -728,26 +728,6 @@ export function Schedule() {
   return <Cron value={value} setValue={setValue} />
 }`
 
-  const exportsSnippet = `import {
-  Cron,
-  CronBuilder,
-  converter,
-  DEFAULT_LOCALE_EN,
-  type CronBuilderProps,
-  type CronProps,
-  type CronError,
-  type Locale,
-  type Mode,
-  type ClockFormat,
-  type AllowEmpty,
-  type ClearButtonAction,
-  type FilterOption,
-  type ShortcutsType,
-  type PeriodType,
-  type CronType,
-  type DropdownsConfig,
-} from '@/components/cron-builder'`
-
   return (
     <div className='site-shell relative overflow-x-clip'>
       <div className='hero-orb hero-orb-left absolute left-[-12rem] top-[4rem] h-[26rem] w-[26rem] rounded-full blur-3xl' />
@@ -755,16 +735,6 @@ export function Schedule() {
       <div className='hero-grid absolute inset-x-0 top-0 h-[34rem]' />
 
       <main className='relative mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 pb-10 pt-12 sm:px-8 sm:pt-20 lg:px-10'>
-        <a
-          href='https://github.com/angelocala94/cron-builder'
-          target='_blank'
-          rel='noopener noreferrer'
-          aria-label='View source on GitHub'
-          className='absolute right-5 top-6 z-30 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border/60 bg-background/40 text-muted-foreground backdrop-blur transition-colors hover:border-primary/40 hover:bg-background/60 hover:text-foreground sm:right-8 sm:top-8 lg:right-10'
-        >
-          <GithubIcon />
-        </a>
-
         <section className='relative z-20 flex flex-col items-center gap-7 pb-20 text-center'>
           <h1 className='text-balance text-5xl font-semibold tracking-[-0.05em] sm:text-6xl lg:text-7xl'>
             Cron, the shadcn way.
@@ -790,6 +760,16 @@ export function Schedule() {
             >
               How to use
             </a>
+            <a
+              aria-label='View source on GitHub'
+              className={cn(buttonVariants({ variant: 'outline' }), 'gap-2')}
+              href='https://github.com/angelocala94/cron-builder'
+              rel='noopener noreferrer'
+              target='_blank'
+            >
+              <GithubIcon />
+              GitHub
+            </a>
           </div>
 
           <div className='w-full max-w-4xl pt-2'>
@@ -803,8 +783,7 @@ export function Schedule() {
               Play with it
             </h2>
             <p className='text-base leading-7 text-muted-foreground'>
-              Build an expression in the browser — pick a preset or tweak the
-              settings to see how the component reacts in real time.
+              Pick a preset or tune the settings. The cron updates as you go.
             </p>
           </div>
 
@@ -887,7 +866,10 @@ export function Schedule() {
           </div>
         </section>
 
-        <section id='usage' className='relative z-10 grid gap-12 pb-20'>
+        <section
+          id='usage'
+          className='relative z-10 grid grid-cols-[minmax(0,_1fr)] gap-12 pb-20'
+        >
           <div className='grid max-w-2xl gap-3'>
             <h2 className='text-3xl font-semibold tracking-[-0.02em] sm:text-4xl'>
               How to use
@@ -903,25 +885,6 @@ export function Schedule() {
 
           <LlmsCard url={llmsUrl} />
 
-          <div className='grid gap-6 rounded-[1.5rem] border border-border/60 bg-background/30 p-5 sm:p-6'>
-            <div className='grid gap-2'>
-              <h3 className='text-2xl font-semibold tracking-[-0.02em] text-foreground'>
-                Named exports and behavior notes
-              </h3>
-              <p className='max-w-3xl text-sm leading-6 text-muted-foreground'>
-                The component re-exports the converter helpers and the main public
-                types from the same entrypoint. A couple of parser behaviors are
-                useful to know up front: Sunday accepts both <code>0</code> and{' '}
-                <code>7</code> on input and normalizes to <code>0</code>, and{' '}
-                <code>@reboot</code> is available when you enable it through the{' '}
-                <code>shortcuts</code> prop. <code>CronProps</code> is kept as a
-                compatibility alias of <code>CronBuilderProps</code>.
-              </p>
-            </div>
-
-            <CodeBlock code={exportsSnippet} />
-          </div>
-
           <div className='grid gap-3 border-t border-border/50 pt-10'>
             <h3 className='text-2xl font-semibold tracking-[-0.02em] text-foreground sm:text-3xl'>
               Props reference
@@ -932,7 +895,7 @@ export function Schedule() {
             </p>
           </div>
 
-          <div className='grid gap-12'>
+          <div className='grid grid-cols-[minmax(0,_1fr)] gap-12'>
             {PROP_GROUPS.map((group) => (
               <PropGroupSection key={group.title} group={group} />
             ))}

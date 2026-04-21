@@ -153,6 +153,7 @@
     @apply rounded-md px-1.5 py-0.5 font-mono text-xs text-foreground;
     background: rgb(255 255 255 / 0.05);
     border: 1px solid rgb(255 255 255 / 0.08);
+    overflow-wrap: anywhere;
   }
 
   .llms-card {
