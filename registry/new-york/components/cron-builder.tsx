@@ -21,7 +21,6 @@ import {
 import { DEFAULT_LOCALE_EN } from '@/registry/new-york/lib/cron-builder/locale'
 import {
   type ClockFormat,
-  type CronBuilderProps,
   type CronProps,
   type DropdownsConfig,
   type FilterOption,
@@ -183,7 +182,7 @@ function getOrderedLocaleList<Key extends string>(
 function getPeriodOptions(
   locale: Locale,
   allowedPeriods: PeriodType[],
-  shortcuts: CronBuilderProps['shortcuts'],
+  shortcuts: CronProps['shortcuts'],
 ) {
   return allowedPeriods
     .filter((allowedPeriod) => {
@@ -775,7 +774,7 @@ function PeriodSelect({
   onOpenChange: (open: boolean) => void
   readOnly: boolean
   setValue: (value: PeriodType | undefined) => void
-  shortcuts: CronBuilderProps['shortcuts']
+  shortcuts: CronProps['shortcuts']
   value: PeriodType
   allowedPeriods: PeriodType[]
 }) {
@@ -882,7 +881,7 @@ function PeriodSelect({
   )
 }
 
-export function CronBuilder(props: CronBuilderProps) {
+export function Cron(props: CronProps) {
   const {
     clearButton = true,
     clearButtonProps = {},
@@ -1540,8 +1539,6 @@ export function CronBuilder(props: CronBuilderProps) {
   )
 }
 
-export const Cron = CronBuilder
-
 export const converter = {
   formatValue,
   getCronStringFromValues,
@@ -1553,9 +1550,8 @@ export const converter = {
 export type {
   AllowEmpty,
   ClockFormat,
-  CronBuilderProps,
-  CronError,
   CronProps,
+  CronError,
   DropdownConfig,
   DropdownsConfig,
   FilterOption,

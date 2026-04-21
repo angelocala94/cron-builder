@@ -224,7 +224,7 @@ export type DropdownsConfig = {
   minutes?: Omit<DropdownConfig, 'humanizeLabels' | 'humanizeValue'>
 }
 
-export interface CronBuilderProps {
+export interface CronProps {
   value?: string
   onChange?: SetValueFunction
   setValue?: SetValue
@@ -251,9 +251,6 @@ export interface CronBuilderProps {
   dropdownsConfig?: DropdownsConfig
   locale?: Locale
 }
-
-/** @deprecated Use `CronBuilderProps` instead. */
-export type CronProps = CronBuilderProps
 
 export type SetValueNumbersOrUndefined = Dispatch<
   SetStateAction<number[] | undefined>

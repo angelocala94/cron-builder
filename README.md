@@ -24,23 +24,6 @@ export function Schedule() {
 
 Fully controlled — pass a cron string in, receive one back. Every behavior (clock format, mode, locale, per-dropdown overrides, validation) is a prop. See the [full props reference](https://angelocala94.github.io/cron-builder/#usage) on the site.
 
-## Exports
-
-```tsx
-import {
-  Cron,
-  CronBuilder,
-  converter,
-  DEFAULT_LOCALE_EN,
-  type CronBuilderProps,
-  type CronProps,
-  type CronError,
-  type Locale,
-} from "@/components/cron-builder";
-```
-
-`Cron` / `CronBuilder` is the component. `converter` exposes the cron parser/serializer helpers. `DEFAULT_LOCALE_EN` can be spread to extend the default copy. `CronProps` is kept as a compatibility alias of `CronBuilderProps`.
-
 ## Development
 
 This repo ships three things: the installable block, the custom registry manifest, and the landing/docs site.

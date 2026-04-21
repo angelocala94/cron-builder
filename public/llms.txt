@@ -226,58 +226,6 @@ export function ScheduleForm() {
 />
 ```
 
-## Exports
-
-```tsx
-import {
-  Cron,
-  CronBuilder,
-  converter,
-  DEFAULT_LOCALE_EN,
-  type CronBuilderProps,
-  type CronProps,
-  type CronError,
-  type Locale,
-  type Mode,
-  type ClockFormat,
-  type AllowEmpty,
-  type ClearButtonAction,
-  type FilterOption,
-  type ShortcutsType,
-  type PeriodType,
-  type CronType,
-  type DropdownsConfig,
-} from '@/components/cron-builder'
-```
-
-- `Cron` / `CronBuilder` - same component, two names.
-- `converter` - `parseCronString`, `getCronStringFromValues` and friends for parsing/serializing without the UI.
-- `DEFAULT_LOCALE_EN` - default locale. Spread it to extend.
-- `CronProps` - compatibility alias of `CronBuilderProps`.
-
-## Types
-
-```ts
-type PeriodType =
-  | 'year' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'reboot'
-
-type CronType =
-  | 'period' | 'months' | 'month-days' | 'week-days' | 'hours' | 'minutes'
-
-type Mode = 'multiple' | 'single'
-type ClockFormat = '24-hour-clock' | '12-hour-clock'
-type AllowEmpty = 'always' | 'never' | 'for-default-value'
-type ClearButtonAction = 'empty' | 'fill-with-every'
-type FilterOption = ({ value, label }: { value: string; label: string }) => boolean
-type ShortcutsType =
-  | '@yearly' | '@annually' | '@monthly' | '@weekly'
-  | '@daily' | '@midnight' | '@hourly' | '@reboot'
-
-type CronError =
-  | { type: 'invalid_cron'; description: string }
-  | undefined
-```
-
 ## License
 
 MIT
