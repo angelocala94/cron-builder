@@ -1,0 +1,283 @@
+# Cron Builder - shadcn registry
+
+> A cron expression builder for shadcn projects. Distributed as a shadcn custom registry block. Themed with your shadcn tokens.
+
+This file is written for AI coding agents. Paste it alongside your own codebase to integrate or configure the component.
+
+## Install
+
+```bash
+pnpm dlx shadcn@latest add https://angelocala94.github.io/cron-builder/r/cron-builder.json
+```
+
+Swap `pnpm` for `npm`, `yarn`, or `bun` if needed. Requires React 18+ and Tailwind v4 with the shadcn preset.
+
+## Usage
+
+```tsx
+import * as React from 'react'
+import { Cron } from '@/components/cron-builder'
+
+export function Schedule() {
+  const [value, setValue] = React.useState('30 5 * * 1-5')
+  return <Cron value={value} setValue={setValue} />
+}
+```
+
+Fully controlled: `value` in, updates via `setValue` or `onChange`.
+The registry installs one component file plus three support files under `lib/cron-builder/`.
+
+If you also need the current period, use `onChange` instead of `setValue`:
+
+```tsx
+import * as React from 'react'
+import { Cron } from '@/components/cron-builder'
+
+export function ScheduleWithPeriod() {
+  const [value, setValue] = React.useState('30 5 * * 1-5')
+  const [selectedPeriod, setSelectedPeriod] = React.useState('week')
+
+  return (
+    <Cron
+      value={value}
+      onChange={(nextValue, { selectedPeriod: nextPeriod }) => {
+        setValue(nextValue)
+        setSelectedPeriod(nextPeriod)
+      }}
+    />
+  )
+}
+```
+
+## Cron syntax
+
+Five-field POSIX (`minute hour day-of-month month day-of-week`) with:
+
+- ranges - `1-5`, `MON-FRI`
+- lists - `1,15,30`
+- steps - `*/5`, `0-30/10`
+- wildcards - `*`
+- weekday/month names - `MON`, `JAN` (parsed on input, emitted as numbers)
+- Sunday accepts both `0` and `7` on input; the parser normalizes `7` to `0`
+- shortcuts - `@yearly`, `@annually`, `@monthly`, `@weekly`, `@daily`, `@midnight`, `@hourly`, `@reboot`
+
+Out-of-range values (e.g. minute `60`) fire `onError`.
+`@reboot` is supported by the converter, and by the UI when you enable it through `shortcuts={true}` or by including `@reboot` in the shortcuts array. In reboot mode the builder collapses to the period selector plus the main Clear action.
+
+## Props
+
+### Core
+
+- `value: string` - required. Current cron expression.
+- `setValue?: (value: string) => void` - optional. Called on every edit when you only need the next cron string. Provide this or `onChange`.
+- `onChange?: (value, { selectedPeriod }) => void` - optional. Alternative to `setValue`; also reports the current period. Provide this or `setValue`.
+- `className?: string` - classes merged onto the root element.
+
+### Selection
+
+- `mode?: 'multiple' | 'single'` (default `'multiple'`) - dropdowns hold several values vs. one.
+- `allowEmpty?: 'always' | 'never' | 'for-default-value'` (default `'for-default-value'`) - when wildcard (`*`) is allowed.
+- `shortcuts?: boolean | ShortcutsType[]` (default `['@yearly', '@annually', '@monthly', '@weekly', '@daily', '@midnight', '@hourly']`) - which `@`-shortcuts are accepted as input for `value` (they are expanded internally) and whether `@reboot` appears as a period option. Pass `true` to accept every shortcut including `@reboot`, `false` to disable all shortcuts, or an array to restrict explicitly.
+- `defaultPeriod?: PeriodType` (default `'day'`) - period chosen when `value` is empty, and tie-breaker for cron strings compatible with several periods (e.g. `10 10 * * *` fits day / week / month / year). Re-evaluated when the prop changes at runtime.
+- `allowedPeriods?: PeriodType[]` - restrict selectable periods.
+- `allowedDropdowns?: CronType[]` - restrict visible dropdowns.
+- `allowClear?: boolean` (default `true`) - per-field clear button inside each field dropdown.
+- `periodicityOnDoubleClick?: boolean` (default `true`) - double-click a value to build every-N schedules. When enabled, single-click selection waits briefly so the component can distinguish a real double click; when disabled, option clicks apply immediately.
+
+### Display
+
+- `clockFormat?: '24-hour-clock' | '12-hour-clock'` (default `'24-hour-clock'`) - with `'24-hour-clock'` hours and minutes are zero-padded (`05`, `09`, `17`); with `'12-hour-clock'` hours show `AM` / `PM` labels (`5AM`, `8PM`).
+- `humanizeValue?: boolean` (default `false`) - render selected months/weekdays as labels instead of numbers.
+- `humanizeLabels?: boolean` (default `true`) - friendly labels in option lists.
+- `leadingZero?: boolean | ('month-days' | 'hours' | 'minutes')[]` (default `false`) - prefix numeric values with a leading zero. Note: hours and minutes are already padded when `clockFormat` is `'24-hour-clock'` (the default), so this prop is mostly useful for `month-days`.
+
+### Clear button
+
+- `clearButton?: boolean` (default `true`) - inline clear action.
+- `clearButtonAction?: 'empty' | 'fill-with-every'` (default `'fill-with-every'`) - what the Clear button emits. `'empty'` emits an empty string (`''`); `'fill-with-every'` emits `* * * * *` (every field explicitly wildcarded).
+- `clearButtonProps?: ButtonHTMLAttributes` - forwarded to the button element.
+
+### State & validation
+
+- `disabled?: boolean` (default `false`).
+- `readOnly?: boolean` (default `false`) - locks the value without dimming.
+- `displayError?: boolean` (default `true`) - built-in inline error state.
+- `onError?: (error: CronError) => void` - fires with `{ type: 'invalid_cron', description }` when the current value can't be parsed, and `undefined` when valid again.
+
+### Advanced
+
+- `dropdownsConfig?: DropdownsConfig` - per-dropdown overrides. Keys: `period`, `months`, `month-days`, `week-days`, `hours`, `minutes`.
+- `period` supports only `disabled` and `readOnly`.
+- `months` / `week-days` support `humanizeLabels`, `humanizeValue`, `allowClear`, `allowEmpty`, `disabled`, `readOnly`, `periodicityOnDoubleClick`, `mode`, `filterOption`.
+- `month-days` / `hours` / `minutes` support `leadingZero`, `allowClear`, `allowEmpty`, `disabled`, `readOnly`, `periodicityOnDoubleClick`, `mode`, `filterOption`.
+
+### i18n
+
+- `locale?: Locale` (default English) - override any user-facing string. For weekdays and months you can use ordered arrays or keyed maps. Accessibility labels live under `locale.aria`. Missing keys fall back to the default.
+
+## Example with options
+
+```tsx
+import * as React from 'react'
+import { Cron, type CronError } from '@/components/cron-builder'
+
+export function ScheduleForm() {
+  const [value, setValue] = React.useState('30 5 * * 1-5')
+  const [error, setError] = React.useState<CronError>()
+
+  return (
+    <Cron
+      value={value}
+      setValue={setValue}
+      mode='multiple'
+      clockFormat='24-hour-clock'
+      humanizeValue
+      shortcuts={['@daily', '@hourly']}
+      onError={setError}
+    />
+  )
+}
+```
+
+## Localization
+
+```tsx
+<Cron
+  value={value}
+  setValue={setValue}
+  locale={{
+    everyText: 'ogni',
+    prefixHours: 'alle',
+    weekDaysMap: {
+      sun: 'Domenica',
+      mon: 'Lunedi',
+      tue: 'Martedi',
+      wed: 'Mercoledi',
+      thu: 'Giovedi',
+      fri: 'Venerdi',
+      sat: 'Sabato',
+    },
+    monthsMap: {
+      jan: 'Gennaio',
+      feb: 'Febbraio',
+      mar: 'Marzo',
+      apr: 'Aprile',
+      may: 'Maggio',
+      jun: 'Giugno',
+      jul: 'Luglio',
+      aug: 'Agosto',
+      sep: 'Settembre',
+      oct: 'Ottobre',
+      nov: 'Novembre',
+      dec: 'Dicembre',
+    },
+    altWeekDaysMap: {
+      sun: 'DOM',
+      mon: 'LUN',
+      tue: 'MAR',
+      wed: 'MER',
+      thu: 'GIO',
+      fri: 'VEN',
+      sat: 'SAB',
+    },
+    altMonthsMap: {
+      jan: 'GEN',
+      feb: 'FEB',
+      mar: 'MAR',
+      apr: 'APR',
+      may: 'MAG',
+      jun: 'GIU',
+      jul: 'LUG',
+      aug: 'AGO',
+      sep: 'SET',
+      oct: 'OTT',
+      nov: 'NOV',
+      dec: 'DIC',
+    },
+    errorInvalidCron: 'Cron non valido',
+    aria: {
+      clearField: 'Cancella campo',
+      periodOptions: 'Opzioni del periodo',
+      monthsOptions: 'Opzioni dei mesi',
+      monthDaysOptions: 'Opzioni dei giorni del mese',
+      weekDaysOptions: 'Opzioni dei giorni della settimana',
+      hoursOptions: 'Opzioni delle ore',
+      minutesOptions: 'Opzioni dei minuti',
+    },
+  }}
+/>
+```
+
+## Per-dropdown overrides
+
+```tsx
+<Cron
+  value={value}
+  setValue={setValue}
+  dropdownsConfig={{
+    minutes: {
+      mode: 'single',
+      leadingZero: true,
+      allowEmpty: 'never',
+      filterOption: ({ value }) => Number(value) < 30,
+    },
+    'week-days': { humanizeLabels: false, allowEmpty: 'never' },
+  }}
+/>
+```
+
+## Exports
+
+```tsx
+import {
+  Cron,
+  CronBuilder,
+  converter,
+  DEFAULT_LOCALE_EN,
+  type CronBuilderProps,
+  type CronProps,
+  type CronError,
+  type Locale,
+  type Mode,
+  type ClockFormat,
+  type AllowEmpty,
+  type ClearButtonAction,
+  type FilterOption,
+  type ShortcutsType,
+  type PeriodType,
+  type CronType,
+  type DropdownsConfig,
+} from '@/components/cron-builder'
+```
+
+- `Cron` / `CronBuilder` - same component, two names.
+- `converter` - `parseCronString`, `getCronStringFromValues` and friends for parsing/serializing without the UI.
+- `DEFAULT_LOCALE_EN` - default locale. Spread it to extend.
+- `CronProps` - compatibility alias of `CronBuilderProps`.
+
+## Types
+
+```ts
+type PeriodType =
+  | 'year' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'reboot'
+
+type CronType =
+  | 'period' | 'months' | 'month-days' | 'week-days' | 'hours' | 'minutes'
+
+type Mode = 'multiple' | 'single'
+type ClockFormat = '24-hour-clock' | '12-hour-clock'
+type AllowEmpty = 'always' | 'never' | 'for-default-value'
+type ClearButtonAction = 'empty' | 'fill-with-every'
+type FilterOption = ({ value, label }: { value: string; label: string }) => boolean
+type ShortcutsType =
+  | '@yearly' | '@annually' | '@monthly' | '@weekly'
+  | '@daily' | '@midnight' | '@hourly' | '@reboot'
+
+type CronError =
+  | { type: 'invalid_cron'; description: string }
+  | undefined
+```
+
+## License
+
+MIT
