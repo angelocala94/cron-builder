@@ -720,11 +720,11 @@ export function App() {
   const installDirectCmd = `pnpm dlx shadcn@latest add ${directItemUrl}`
   const llmsUrl = `${registryRoot}llms.txt`
 
-  const usageSnippet = `import * as React from 'react'
+  const usageSnippet = `import { useState } from 'react'
 import { Cron } from '@/components/cron-builder'
 
 export function Schedule() {
-  const [value, setValue] = React.useState('30 5 * * 1-5')
+  const [value, setValue] = useState('30 5 * * 1-5')
   return <Cron value={value} setValue={setValue} />
 }`
 
